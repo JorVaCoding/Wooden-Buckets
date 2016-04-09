@@ -1,0 +1,5 @@
+item.woodenBucket.name=Wooden Bucket
+item.woodenBucketFilled.name=Wooden Bucket (Filled)
+item.mortarpestle.name=Mortar and Pestle
+item.waterproofCover.name=Waterproof Seed Paste
+woodenbuckets:burnthands=The fluid is too hot to be held in the bucket. You burnt your hands!

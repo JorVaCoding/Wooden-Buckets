@@ -1,1 +1,28 @@
 forge-1.7.10-10.13.4.1614-1.7.10-src.zip
+
+##THE FOLLOWING IS TAKEN FROM PAHIMAR'S EE3 REPO ON GITHUB... https://github.com/pahimar/Equivalent-Exchange-3/blob/master/.gitignore
+## gradle
+/.gradle
+/build
+/gradle
+/gradlew
+/gradlew.bat
+
+## ForgeGradle
+/run
+
+## eclipse
+/eclipse
+/.settings
+/.metadata
+/.classpath
+/.project
+/bin
+
+## intellij
+/out
+/.idea
+/*.iml
+/*.ipr
+/*.iws
+/atlassian-ide-plugin.xml
