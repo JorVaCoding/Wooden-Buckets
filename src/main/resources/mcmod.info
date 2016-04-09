@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "woodenbuckets",
+  "name": "Wooden Buckets",
+  "description": "A mod with buckets, made of wood.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["JorVa"],
+  "credits": "Skiyte for the idea of this mod, ShadowFacts for bullying me into fixing it.",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
