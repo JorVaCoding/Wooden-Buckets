@@ -2,14 +2,18 @@ package me.jorva.woodenbuckets;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -17,7 +21,7 @@ import net.minecraftforge.event.entity.player.FillBucketEvent;
 
 public class ItemWoodenBucket extends Item {
 
-    private Block fillBlock;
+    public Block fillBlock;
 
     public ItemWoodenBucket(Block block) {
         this.maxStackSize = 1;
@@ -81,6 +85,7 @@ public class ItemWoodenBucket extends Item {
                         if (!world.isRemote) {
                             player.addChatMessage(new ChatComponentText(LanguageRegistry.instance().getStringLocalization("woodenbuckets:burnthands")));
                             player.setFire(5);
+//                            return new ItemStack(Blocks.air,1); //TODO: FIX THIS
                         }
                     }
                 } else {
@@ -170,5 +175,32 @@ public class ItemWoodenBucket extends Item {
                 return true;
             }
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private IIcon icon_empty,icon_filled;
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(IIconRegister iIconRegister) {
+        icon_empty = iIconRegister.registerIcon("woodenbuckets:bucket_empty");
+        icon_filled = iIconRegister.registerIcon("woodenbuckets:bucket_filled");
+    }
+
+    @Override
+    public IIcon getIcon(ItemStack stack, int pass) {
+        ItemWoodenBucket item = (ItemWoodenBucket)stack.getItem();
+        if(item.fillBlock != Blocks.air)
+            return icon_filled;
+        else
+            return icon_empty;
+    }
+
+    @Override
+    public IIcon getIconFromDamage(int p_77617_1_) {
+        if(this.fillBlock != Blocks.air)
+            return icon_filled;
+        else
+            return icon_empty;
     }
 }
