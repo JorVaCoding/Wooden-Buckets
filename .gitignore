@@ -2,9 +2,8 @@ forge-1.7.10-10.13.4.1614-1.7.10-src.zip
 
 ##THE FOLLOWING IS TAKEN FROM PAHIMAR'S EE3 REPO ON GITHUB... https://github.com/pahimar/Equivalent-Exchange-3/blob/master/.gitignore
 ## gradle
-
 /build
-
+/.gradle
 /gradlew.bat
 
 ## ForgeGradle

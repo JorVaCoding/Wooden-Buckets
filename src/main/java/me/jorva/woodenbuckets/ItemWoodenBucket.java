@@ -12,12 +12,17 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidHandler;
 
 public class ItemWoodenBucket extends Item {
 
@@ -78,7 +83,7 @@ public class ItemWoodenBucket extends Item {
 
                     if (material == Material.water && l == 0) {
                         world.setBlockToAir(i, j, k);
-                        return this.func_150910_a(stack, player, WoodenBuckets.itemBucketFilled);
+                        return new ItemStack(WoodenBuckets.itemBucketFilled,1);
                     }
 
                     if (material == Material.lava && l == 0) {
@@ -86,7 +91,10 @@ public class ItemWoodenBucket extends Item {
                             player.addChatMessage(new ChatComponentText(LanguageRegistry.instance().getStringLocalization("woodenbuckets:burnthands")));
                             player.setFire(5);
 //                            return new ItemStack(Blocks.air,1); //TODO: FIX THIS
+//                            return null;
+
                         }
+
                     }
                 } else {
                     if (this.fillBlock == Blocks.air) {
@@ -131,20 +139,6 @@ public class ItemWoodenBucket extends Item {
         }
     }
 
-    private ItemStack func_150910_a(ItemStack stack, EntityPlayer player, Item item) {
-        if (player.capabilities.isCreativeMode) {
-            return stack;
-        } else if (--stack.stackSize <= 0) {
-            return new ItemStack(item);
-        } else {
-            if (!player.inventory.addItemStackToInventory(new ItemStack(item))) {
-                player.dropPlayerItemWithRandomChoice(new ItemStack(item, 1, 0), false);
-            }
-
-            return stack;
-        }
-    }
-
     /**
      * Attempts to place the liquid contained inside the bucket.
      */
@@ -178,7 +172,7 @@ public class ItemWoodenBucket extends Item {
     }
 
     @SideOnly(Side.CLIENT)
-    private IIcon icon_empty,icon_filled;
+    private IIcon icon_empty, icon_filled;
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -189,8 +183,8 @@ public class ItemWoodenBucket extends Item {
 
     @Override
     public IIcon getIcon(ItemStack stack, int pass) {
-        ItemWoodenBucket item = (ItemWoodenBucket)stack.getItem();
-        if(item.fillBlock != Blocks.air)
+        ItemWoodenBucket item = (ItemWoodenBucket) stack.getItem();
+        if (item.fillBlock != Blocks.air)
             return icon_filled;
         else
             return icon_empty;
@@ -198,9 +192,43 @@ public class ItemWoodenBucket extends Item {
 
     @Override
     public IIcon getIconFromDamage(int p_77617_1_) {
-        if(this.fillBlock != Blocks.air)
+        if (this.fillBlock != Blocks.air)
             return icon_filled;
         else
             return icon_empty;
     }
+
+    @Override
+    public boolean onItemUse(ItemStack itemStack, EntityPlayer  player , World world, int x, int y, int z, int side, float hX, float hY, float hZ) {
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (!world.isRemote) {
+            if (itemStack.getItem() == this) {
+                if (te instanceof IFluidHandler) {
+                    ItemWoodenBucket item = (ItemWoodenBucket) itemStack.getItem();
+                    boolean empty = item.fillBlock == Blocks.air;
+                    IFluidHandler fluidHandler = (IFluidHandler) te;
+                    if (empty) {
+                        FluidStack fs = fluidHandler.drain(ForgeDirection.getOrientation(side), 1000, false);
+                        if (fs != null) {
+                            if (fs.getFluid() == FluidRegistry.WATER) {
+                                fluidHandler.drain(ForgeDirection.getOrientation(side), 1000, true);
+                                player.setCurrentItemOrArmor(0, new ItemStack(WoodenBuckets.itemBucketFilled));
+                                return true;
+                            }
+                        }
+                    } else {
+                        int i = fluidHandler.fill(ForgeDirection.getOrientation(side), new FluidStack(FluidRegistry.WATER, 1000), false);
+                        if (i > 0) {
+                            fluidHandler.fill(ForgeDirection.getOrientation(side), new FluidStack(FluidRegistry.WATER, 1000), true);
+                            player.setCurrentItemOrArmor(0, new ItemStack(WoodenBuckets.itemBucketEmpty));
+
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
 }
